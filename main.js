@@ -36,7 +36,7 @@ function init() {
     ctx.fillRect(20, 20, 15, canvas.height - 60);
     ctx.fillRect(canvas.width - 40, 20, 15, canvas.height - 60);
     ctx.fillRect(20, 20, canvas.width - 45, 15);
-    ctx.fillRect(80, canvas.height - 55, 120, 15);
+    ctx.fillRect(80, 695, 120, 15);
 
     ctx.fillStyle = '#ddd';
     ctx.font = 'bold 40px sans-serif';
@@ -46,18 +46,20 @@ function init() {
 }
 init();
 
+let PDx, PDy, PDw;
 function start() {
     let x = 50, y = 80;
-    for (let i = 0; i < temp[1].length; i++) {
-        for (let j = 0; j < temp[1][i].length; j++) {
-            blockAdd(x, y, temp[1][i][j]);
+    for (let i = 0; i < temp[0].length; i++) {
+        for (let j = 0; j < temp[0][i].length; j++) {
+            blockAdd(x, y, temp[0][i][j]);
             x += 75;
         }
         x = 50, y += 40;
     }
 
-    ballAdd();
+    PDx = 80, PDy = 695, PDw = 120;
 
+    ballAdd();
     main();
 }
 
@@ -69,19 +71,8 @@ function start() {
 
 
 function main() {
+    let id = window.requestAnimationFrame(main);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(20, 20, 15, canvas.height - 60);
-    ctx.fillRect(canvas.width - 40, 20, 15, canvas.height - 60);
-    ctx.fillRect(20, 20, canvas.width - 45, 15);
-
-    for (let i = 0; i < block_state.length; i++) {
-        if (block_state[i].state == 1) {
-            ctx.fillRect(block_state[i].x, block_state[i].y, block_state[i].w, block_state[i].h);
-        }
-    }
-
 
     for (let i = 0; i < ball.length; i++) {
         ctx.beginPath();
@@ -94,16 +85,32 @@ function main() {
 
         //当たり判定たち
 
-        if (ball[i].y + 12 >= canvas.height || ball[i].y - 12 <= 35) {
+        if (ball[i].y - 12 <= 35) {
             ball[i].dy *= -1;
         }
         if (ball[i].x + 12 >= canvas.width - 35 || ball[i].x - 12 <= 35) {
             ball[i].dx *= -1;
         }
 
+        let res = collision(PDx, PDx + PDw, PDy, PDy + 15, ball[i].x, ball[i].y, 12)
+        if (res == true) {
+            let half = PDw / 2;
+            if (res == 1) {
+                ball[i].dy *= -1;
+            }
+        }
+
+        //・・・・・・・・・・・・・・・・・・・・・・・・終了処理
+        if (ball[i].y + 12 >= canvas.height) {
+            window.cancelAnimationFrame(id);
+            ball = [];
+            break;
+        }
+
+
         for (let j = 0; j < block_state.length; j++) {
             if (block_state[j].state == 1) {
-                let res = collision(block_state[j].x, block_state[j].x + block_state[j].w, block_state[j].y, block_state[j].y + block_state[j].h, ball[i].x, ball[i].y, 12);
+                res = collision(block_state[j].x, block_state[j].x + block_state[j].w, block_state[j].y, block_state[j].y + block_state[j].h, ball[i].x, ball[i].y, 12);
                 if (res != false) {
                     block_state[j].state = 0;
                     if (res == 1) {
@@ -119,13 +126,28 @@ function main() {
         }
     }
 
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(20, 20, 15, canvas.height - 60);
+    ctx.fillRect(canvas.width - 40, 20, 15, canvas.height - 60);
+    ctx.fillRect(20, 20, canvas.width - 45, 15);
+
+    for (let i = 0; i < block_state.length; i++) {
+        if (block_state[i].state == 1) {
+            ctx.fillRect(block_state[i].x, block_state[i].y, block_state[i].w, block_state[i].h);
+        }
+    }
+
+
+
     //PADDLE
+    ctx.fillRect(PDx, PDy, PDw, 15);
 
 
-
-    let id = window.requestAnimationFrame(main);
+    if (block_state.length == 0) {
+        window.cancelAnimationFrame(id);
+        ball = [];
+    }
 }
-
 
 
 function collision(L, R, T, B, x, y, radius) {
@@ -167,6 +189,19 @@ function keyDownHandler(e) {
 
     if (e.keyCode == 13) {
         ballAdd();
+    }
+
+    if (e.keyCode == 37 && PDx >= 35) {
+        PDx -= 12;
+        if (PDx < 35) {
+            PDx = 35;
+        }
+    }
+    if (e.keyCode == 39 && PDx <= canvas.width - 35 - PDw) {
+        PDx += 12;
+        if (PDx > canvas.width - 35) {
+            PDx = canvas.width - 35;
+        }
     }
 }
 
