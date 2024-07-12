@@ -35,7 +35,7 @@ function init() {
 init();
 
 function start() {
-    let x = 50, y = 150;
+    let x = 50, y = 80;
     for (let i = 0; i < temp.length; i++) {
         for (let j = 0; j < temp[i].length; j++) {
             blockAdd(x, y, temp[i][j]);
@@ -99,7 +99,10 @@ function main() {
                     } else {
                         ball[i].dx *= -1;
                     }
+                    break;
                 }
+            } else {
+                block_state.splice(j, 1);
             }
         }
     }
@@ -129,7 +132,7 @@ function collision(L, R, T, B, x, y, radius) {
         return false;
     }
 
-    if (x >= L && x <= R) {
+    if (x + 6 > L && x - 6 < R) {
         return 1;
     } else {
         return 2;
@@ -167,8 +170,8 @@ let block_state = [];
 function blockAdd(fcx, fcy, fcstate) {
     let b_x = fcx;
     let b_y = fcy;
-    let b_w = 70;
-    let b_h = 35;
+    let b_w = 65;
+    let b_h = 30;
     let b_state = fcstate;
 
     let b = new Block(b_x, b_y, b_w, b_h, b_state);
