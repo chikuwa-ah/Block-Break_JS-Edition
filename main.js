@@ -3,12 +3,25 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 let temp = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ], [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+
 ]
 
 function init() {
@@ -30,15 +43,14 @@ function init() {
     text = 'PRESS SPACE!!';
     textWidth = ctx.measureText(text).width;
     ctx.fillText(text, (canvas.width - textWidth) / 2, 450);
-
 }
 init();
 
 function start() {
     let x = 50, y = 80;
-    for (let i = 0; i < temp.length; i++) {
-        for (let j = 0; j < temp[i].length; j++) {
-            blockAdd(x, y, temp[i][j]);
+    for (let i = 0; i < temp[1].length; i++) {
+        for (let j = 0; j < temp[1][i].length; j++) {
+            blockAdd(x, y, temp[1][i][j]);
             x += 75;
         }
         x = 50, y += 40;
@@ -107,8 +119,14 @@ function main() {
         }
     }
 
+    //PADDLE
+
+
+
     let id = window.requestAnimationFrame(main);
 }
+
+
 
 function collision(L, R, T, B, x, y, radius) {
     if (L - radius > x || R + radius < x || T - radius > y || B + radius < y) {
