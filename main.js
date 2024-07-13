@@ -33,8 +33,8 @@ function init() {
     let textWidth = ctx.measureText(text).width;
     ctx.fillText(text, (canvas.width - textWidth) / 2, 300);
 
-    ctx.fillRect(20, 20, 15, canvas.height - 60);
-    ctx.fillRect(canvas.width - 40, 20, 15, canvas.height - 60);
+    ctx.fillRect(20, 20, 15, canvas.height);
+    ctx.fillRect(canvas.width - 40, 20, 15, canvas.height);
     ctx.fillRect(20, 20, canvas.width - 45, 15);
     ctx.fillRect(80, 695, 120, 15);
 
@@ -75,10 +75,6 @@ function main() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let i = 0; i < ball.length; i++) {
-        ctx.beginPath();
-        ctx.arc(ball[i].x, ball[i].y, 12, 0, 2 * Math.PI);
-        ctx.closePath();
-        ctx.fill();
 
         ball[i].x += ball[i].dx;
         ball[i].y += ball[i].dy;
@@ -92,21 +88,18 @@ function main() {
             ball[i].dx *= -1;
         }
 
-        let res = collision(PDx, PDx + PDw, PDy, PDy + 15, ball[i].x, ball[i].y, 12)
-        if (res == true) {
-            let half = PDw / 2;
-            if (res == 1) {
-                ball[i].dy *= -1;
-            }
+        if (ball[i].y + 12 - PDy > 3 && ball[i].x + 12 >= PDx && ball[i].x - 12 <= PDx + PDw) {
+            ball[i].dy = Math.abs(ball[i].dy) * -1;
         }
 
-        //・・・・・・・・・・・・・・・・・・・・・・・・終了処理
         if (ball[i].y + 12 >= canvas.height) {
-            window.cancelAnimationFrame(id);
-            ball = [];
-            break;
+            ball.splice(i, 1);
         }
 
+        ctx.beginPath();
+        ctx.arc(ball[i].x, ball[i].y, 12, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill();
 
         for (let j = 0; j < block_state.length; j++) {
             if (block_state[j].state == 1) {
@@ -127,8 +120,8 @@ function main() {
     }
 
     ctx.fillStyle = '#fff';
-    ctx.fillRect(20, 20, 15, canvas.height - 60);
-    ctx.fillRect(canvas.width - 40, 20, 15, canvas.height - 60);
+    ctx.fillRect(20, 20, 15, canvas.height);
+    ctx.fillRect(canvas.width - 40, 20, 15, canvas.height);
     ctx.fillRect(20, 20, canvas.width - 45, 15);
 
     for (let i = 0; i < block_state.length; i++) {
@@ -140,10 +133,16 @@ function main() {
 
 
     //PADDLE
+    if (PDx < 35) {
+        PDx = 35;
+    }
+    if (PDx > canvas.width - 35 - PDw) {
+        PDx = canvas.width - 35 - PDw;
+    }
     ctx.fillRect(PDx, PDy, PDw, 15);
 
 
-    if (block_state.length == 0) {
+    if (block_state.length == 0 || ball.length == 0) {
         window.cancelAnimationFrame(id);
         ball = [];
     }
@@ -192,19 +191,18 @@ function keyDownHandler(e) {
     }
 
     if (e.keyCode == 37 && PDx >= 35) {
-        PDx -= 12;
+        PDx -= 20;
         if (PDx < 35) {
             PDx = 35;
         }
     }
     if (e.keyCode == 39 && PDx <= canvas.width - 35 - PDw) {
-        PDx += 12;
+        PDx += 20;
         if (PDx > canvas.width - 35) {
             PDx = canvas.width - 35;
         }
     }
 }
-
 
 
 //CLASSES
@@ -244,8 +242,8 @@ let ball = [];
 function ballAdd() {
     let ball_x = 60;
     let ball_y = 450;
-    let ball_dx = 5;
-    let ball_dy = 5;
+    let ball_dx = 2;
+    let ball_dy = 2;
 
     let b = new Ball(ball_x, ball_y, ball_dx, ball_dy);
     ball.push(b);
