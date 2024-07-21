@@ -74,27 +74,31 @@ function main() {
     let id = window.requestAnimationFrame(main);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(20, 20, 15, canvas.height);
+    ctx.fillRect(canvas.width - 40, 20, 15, canvas.height);
+    ctx.fillRect(20, 20, canvas.width - 45, 15);
+
+    for (let i = 0; i < block_state.length; i++) {
+        if (block_state[i].state == 1) {
+            ctx.fillRect(block_state[i].x, block_state[i].y, block_state[i].w, block_state[i].h);
+        }
+    }
+
+    //PADDLE
+    if (PDx < 35) {
+        PDx = 35;
+    }
+    if (PDx > canvas.width - 35 - PDw) {
+        PDx = canvas.width - 35 - PDw;
+    }
+    ctx.fillRect(PDx, PDy, PDw, 15);
+
+
     for (let i = 0; i < ball.length; i++) {
 
         ball[i].x += ball[i].dx;
         ball[i].y += ball[i].dy;
-
-        //当たり判定たち
-
-        if (ball[i].y - 12 <= 35) {
-            ball[i].dy *= -1;
-        }
-        if (ball[i].x + 12 >= canvas.width - 35 || ball[i].x - 12 <= 35) {
-            ball[i].dx *= -1;
-        }
-
-        if (ball[i].y + 12 - PDy > 3 && ball[i].x + 12 >= PDx && ball[i].x - 12 <= PDx + PDw) {
-            ball[i].dy = Math.abs(ball[i].dy) * -1;
-        }
-
-        if (ball[i].y + 12 >= canvas.height) {
-            ball.splice(i, 1);
-        }
 
         ctx.beginPath();
         ctx.arc(ball[i].x, ball[i].y, 12, 0, 2 * Math.PI);
@@ -117,29 +121,38 @@ function main() {
                 block_state.splice(j, 1);
             }
         }
-    }
 
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(20, 20, 15, canvas.height);
-    ctx.fillRect(canvas.width - 40, 20, 15, canvas.height);
-    ctx.fillRect(20, 20, canvas.width - 45, 15);
+        //当たり判定たち(ブロック以外)
+        if (ball[i].y - 12 <= 35) {
+            ball[i].dy *= -1;
+        }
+        if (ball[i].x + 12 >= canvas.width - 35 || ball[i].x - 12 <= 35) {
+            ball[i].dx *= -1;
+        }
 
-    for (let i = 0; i < block_state.length; i++) {
-        if (block_state[i].state == 1) {
-            ctx.fillRect(block_state[i].x, block_state[i].y, block_state[i].w, block_state[i].h);
+        if (ball[i].y + 12 - PDy > 3 && ball[i].x + 12 >= PDx && ball[i].x - 12 <= PDx + PDw) {
+            ball[i].dy = Math.abs(ball[i].dy) * -1;
+            let half = PDw / 2;
+            console.log(half);
+            if (ball[i].x < PDx + half) {
+                ball[i].dx = Math.abs(((half + 12) / 2) / (ball[i].x - (PDx - 12)) * ball[i].dy) * -1;
+                console.log(ball[i].dx)
+                if (ball[i].dx < ball[i].dy * 1.5) {
+                    ball[i].dx = ball[i].dy * 1.5
+                }
+                console.log(ball[i].dx)
+            } else {
+                ball[i].dx = Math.abs((ball[i].x - (PDx + half)) / ((half + 12) / 2) * ball[i].dy);
+                if (ball[i].dx > ball[i].dy * -1.5) {
+                    ball[i].dx = ball[i].dy * -1.5
+                }
+            }
+        }
+
+        if (ball[i].y + 12 >= canvas.height) {
+            ball.splice(i, 1);
         }
     }
-
-
-
-    //PADDLE
-    if (PDx < 35) {
-        PDx = 35;
-    }
-    if (PDx > canvas.width - 35 - PDw) {
-        PDx = canvas.width - 35 - PDw;
-    }
-    ctx.fillRect(PDx, PDy, PDw, 15);
 
 
     if (block_state.length == 0 || ball.length == 0) {
