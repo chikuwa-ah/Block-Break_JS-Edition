@@ -48,7 +48,7 @@ init();
 
 let PDx, PDy, PDw;
 function start() {
-    let x = 50, y = 80;
+    let x = 50, y = 120;
     for (let i = 0; i < temp[0].length; i++) {
         for (let j = 0; j < temp[0][i].length; j++) {
             blockAdd(x, y, temp[0][i][j]);
@@ -133,14 +133,11 @@ function main() {
         if (ball[i].y + 12 - PDy > 3 && ball[i].x + 12 >= PDx && ball[i].x - 12 <= PDx + PDw) {
             ball[i].dy = Math.abs(ball[i].dy) * -1;
             let half = PDw / 2;
-            console.log(half);
             if (ball[i].x < PDx + half) {
                 ball[i].dx = Math.abs(((half + 12) / 2) / (ball[i].x - (PDx - 12)) * ball[i].dy) * -1;
-                console.log(ball[i].dx)
                 if (ball[i].dx < ball[i].dy * 1.5) {
                     ball[i].dx = ball[i].dy * 1.5
                 }
-                console.log(ball[i].dx)
             } else {
                 ball[i].dx = Math.abs((ball[i].x - (PDx + half)) / ((half + 12) / 2) * ball[i].dy);
                 if (ball[i].dx > ball[i].dy * -1.5) {
@@ -253,10 +250,10 @@ class Ball {
 
 let ball = [];
 function ballAdd() {
-    let ball_x = 60;
-    let ball_y = 450;
-    let ball_dx = 2;
-    let ball_dy = 2;
+    let ball_x = 500;
+    let ball_y = 700;
+    let ball_dx = -0;
+    let ball_dy = -2;
 
     let b = new Ball(ball_x, ball_y, ball_dx, ball_dy);
     ball.push(b);
